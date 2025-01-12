@@ -1,7 +1,8 @@
-import { IpcHandler } from '../main/preload'
+import { ApiHandler, IpcHandler, NpmrcHandler } from '../main/preload'
 
 declare global {
   interface Window {
-    ipc: IpcHandler
+    npmrcAPI: NpmrcHandler
+    api: ApiHandler
   }
 }
