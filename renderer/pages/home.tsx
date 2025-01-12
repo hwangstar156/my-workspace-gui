@@ -1,36 +1,27 @@
 import { useEffect, useState } from 'react'
+import { NpmrcEditor } from '../components/npmrc/npmrc-editor'
 
 export default function HomePage() {
-  const [globalNpmrc, setGlobalNpmrc] = useState<string[]>([])
-  const [projectNpmrc, setProjectNpmrc] = useState<string[]>([])
+  const [globalPath, setGlobalPath] = useState<string | undefined>()
+  // const [projectPath, setProjectPath] = useState<string | undefined>()
 
   useEffect(() => {
-    const getNpmrc = async () => {
+    const fetchAndSetPath = async () => {
       const homeDir = await window.api.getHomeDir()
+      const globalLocalPath = `${homeDir}/.npmrc`
+      // const projectLocalPath = `./.npmrc`
 
-      const globalResult = await window.npmrcAPI.readNpmrc(`${homeDir}/.npmrc`)
-      const projectResult = await window.npmrcAPI.readNpmrc(`./.npmrc`)
-
-      const globalContent = globalResult.content.split('\n')
-      const projectContent = projectResult.content.split('\n')
-
-      setGlobalNpmrc(globalContent)
-      setProjectNpmrc(projectContent)
+      setGlobalPath(globalLocalPath)
+      // setProjectPath(projectLocalPath)
     }
 
-    getNpmrc()
+    fetchAndSetPath()
   }, [])
 
   return (
     <>
-      <div>global npmrc</div>
-      {globalNpmrc.map((npmrc) => (
-        <div>{npmrc}</div>
-      ))}
-      <div>local npmrc</div>
-      {projectNpmrc.map((npmrc) => (
-        <div>{npmrc}</div>
-      ))}
+      <NpmrcEditor type="global" targetPath={globalPath} />
+      {/* <NpmrcEditor type="project" targetPath={projectPath} /> */}
     </>
   )
 }
