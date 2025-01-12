@@ -1,43 +1,32 @@
-import React from 'react'
-import Head from 'next/head'
-import Link from 'next/link'
-import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
 export default function HomePage() {
-  const [message, setMessage] = React.useState('No message found')
+  const [globalNpmrc, setGlobalNpmrc] = useState<string[]>([]);
+  const [projectNpmrc, setProjectNpmrc] = useState<string[]>([]);
 
-  React.useEffect(() => {
-    window.ipc.on('message', (message: string) => {
-      setMessage(message)
-    })
+  useEffect(() => {
+    const getNpmrc = async () => {
+      const homeDir = await window.api.getHomeDir();
+
+      const globalResult = await window.npmrcAPI.readNpmrc(`${homeDir}/.npmrc`);
+      const projectResult = await window.npmrcAPI.readNpmrc(`./.npmrc`);
+
+      const globalContent = globalResult.content.split('\n');
+      const projectContent = projectResult.content.split('\n');
+
+      setGlobalNpmrc(globalContent);
+      setProjectNpmrc(projectContent);
+    }
+
+    getNpmrc();
   }, [])
 
   return (
-    <React.Fragment>
-      <Head>
-        <title>Home - Nextron (basic-lang-typescript)</title>
-      </Head>
-      <div>
-        <p>
-          ⚡ Electron + Next.js ⚡ -<Link href="/next">Go to next page</Link>
-        </p>
-        <Image
-          src="/images/logo.png"
-          alt="Logo image"
-          width={256}
-          height={256}
-        />
-      </div>
-      <div>
-        <button
-          onClick={() => {
-            window.ipc.send('message', 'Hello')
-          }}
-        >
-          Test IPC
-        </button>
-        <p>{message}</p>
-      </div>
-    </React.Fragment>
+    <>
+      <div>global npmrc</div>
+      {globalNpmrc.map((npmrc) => <div>{npmrc}</div>)}
+      <div>local npmrc</div>
+      {projectNpmrc.map((npmrc) => <div>{npmrc}</div>)}
+    </>
   )
 }
