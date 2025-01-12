@@ -7,7 +7,7 @@ export default function HomePage() {
   const [message, setMessage] = React.useState('No message found')
 
   React.useEffect(() => {
-    window.ipc.on('message', (message) => {
+    window.ipc.on('message', (message: string) => {
       setMessage(message)
     })
   }, [])
@@ -15,11 +15,11 @@ export default function HomePage() {
   return (
     <React.Fragment>
       <Head>
-        <title>Home - Nextron (basic-lang-javascript)</title>
+        <title>Home - Nextron (basic-lang-typescript)</title>
       </Head>
       <div>
         <p>
-          ⚡ Electron + Next.js ⚡ - <Link href="/next">Go to next page</Link>
+          ⚡ Electron + Next.js ⚡ -<Link href="/next">Go to next page</Link>
         </p>
         <Image
           src="/images/logo.png"
