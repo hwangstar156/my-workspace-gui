@@ -1,6 +1,7 @@
 import path from 'path'
 import os from 'os'
 import fs from 'fs'
+import { exec } from 'child_process'
 import { app, ipcMain } from 'electron'
 import serve from 'electron-serve'
 import { createWindow } from './helpers'
@@ -65,4 +66,16 @@ ipcMain.handle('write-npmrc', async (_, targetPath: string, content: string) => 
   } catch (error) {
     return { success: false, error: error.message }
   }
+})
+
+ipcMain.handle('command', async (event, command) => {
+  return new Promise((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        reject(stderr || error.message)
+      } else {
+        resolve(stdout)
+      }
+    })
+  })
 })
