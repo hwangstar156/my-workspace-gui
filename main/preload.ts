@@ -10,9 +10,16 @@ const apiHandler = {
   getHomeDir: async () => ipcRenderer.invoke('get-home-dir'),
 }
 
+const commandHandler = {
+  nvmCommand: async (command: string) => ipcRenderer.invoke('command', command),
+}
+
 contextBridge.exposeInMainWorld('npmrcAPI', npmrcHandler)
 
 contextBridge.exposeInMainWorld('api', apiHandler)
 
+contextBridge.exposeInMainWorld('commandAPI', commandHandler)
+
 export type NpmrcHandler = typeof npmrcHandler
 export type ApiHandler = typeof apiHandler
+export type CommandHandler = typeof commandHandler
