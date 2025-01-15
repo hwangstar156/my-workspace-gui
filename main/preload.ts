@@ -12,6 +12,7 @@ const apiHandler = {
 
 const nvmHandler = {
   command: async (command: string) => ipcRenderer.invoke('nvm-command', command),
+  getCurrentVersion: async () => ipcRenderer.invoke('get-current-node-version'),
 }
 
 const terminalHandler = {

@@ -42,6 +42,10 @@ ipcMain.on('message', async (event, arg) => {
   event.reply('message', `${arg} World!`)
 })
 
+ipcMain.handle('get-current-node-version', () => {
+  return process.versions.node
+})
+
 ipcMain.handle('get-home-dir', () => {
   try {
     return os.homedir()
