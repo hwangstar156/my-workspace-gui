@@ -23,6 +23,9 @@ importers:
       styled-components:
         specifier: ^6.1.14
         version: 6.1.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      styled-reset:
+        specifier: ^4.5.2
+        version: 4.5.2(styled-components@6.1.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
     devDependencies:
       '@babel/runtime-corejs3':
         specifier: ^7.26.0
@@ -2829,6 +2832,12 @@ packages:
         optional: true
       babel-plugin-macros:
         optional: true
+
+  styled-reset@4.5.2:
+    resolution: {integrity: sha512-dbAaaVEhweBs2FGfqGBdW6oMcMK8238C2X5KCxBhUQJX92m/QyUfzRADOXhdXiXNkIPELtMCd72YY9eCdORfIw==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      styled-components: '>=4.0.0 || >=5.0.0 || >=6.0.0'
 
   stylis@4.3.2:
     resolution: {integrity: sha512-bhtUjWd/z6ltJiQwg0dUfxEJ+W+jdqQd8TbWLWyeIJHlnsqmGLRFFd8e5mA0AZi/zx90smXRlN66YMTcaSFifg==}
@@ -6358,6 +6367,10 @@ snapshots:
       react: 18.3.1
     optionalDependencies:
       '@babel/core': 7.26.0
+
+  styled-reset@4.5.2(styled-components@6.1.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
+    dependencies:
+      styled-components: 6.1.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   stylis@4.3.2: {}
 
