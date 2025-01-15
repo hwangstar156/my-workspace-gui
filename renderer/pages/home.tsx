@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { NpmrcEditor } from '../components/npmrc/npmrc-editor'
+import Link from 'next/link'
 
 export default function HomePage() {
   const [globalPath, setGlobalPath] = useState<string | undefined>()
@@ -21,6 +22,7 @@ export default function HomePage() {
   return (
     <>
       <NpmrcEditor type="global" targetPath={globalPath} />
+      <Link href="/nvm">nvm으로 이동</Link>
       {/* <NpmrcEditor type="project" targetPath={projectPath} /> */}
     </>
   )
