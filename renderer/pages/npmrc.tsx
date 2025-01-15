@@ -22,8 +22,6 @@ export default function HomePage() {
   return (
     <>
       <NpmrcEditor type="global" targetPath={globalPath} />
-      <Link href="/nvm">nvm으로 이동</Link>
-      {/* <NpmrcEditor type="project" targetPath={projectPath} /> */}
     </>
   )
 }

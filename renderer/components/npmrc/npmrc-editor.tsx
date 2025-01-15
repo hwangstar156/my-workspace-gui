@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import MonacoEditor from '@monaco-editor/react'
 
 interface NpmrcEditorProps {
   type: 'global' | 'project'
@@ -11,8 +12,6 @@ export function NpmrcEditor({ type, targetPath }: NpmrcEditorProps) {
   useEffect(() => {
     const fetchNpmrc = async () => {
       const result = await window.npmrcAPI.readNpmrc(targetPath)
-
-      console.log(result)
 
       const content = result.content.split('\n')
 
@@ -32,10 +31,8 @@ export function NpmrcEditor({ type, targetPath }: NpmrcEditorProps) {
     }
   }
 
-  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const result = e.target.value
-
-    const newContent = result.split('\n')
+  const handleTextareaChange = (value: string) => {
+    const newContent = value.split('\n')
 
     setNpmrc(newContent)
     updateNpmrc(newContent.join('\n')) // 파일 업데이트
@@ -43,8 +40,24 @@ export function NpmrcEditor({ type, targetPath }: NpmrcEditorProps) {
 
   return (
     <div>
-      <h1>{type} .npmrc Editor</h1>
-      <textarea value={npmrc.join('\n')} onChange={handleTextareaChange} rows={20} cols={80} />
+      <MonacoEditor
+        value={npmrc.join('\n')}
+        height="500px"
+        language="ini"
+        options={{
+          minimap: { enabled: false },
+          lineHeight: 28,
+          scrollbar: {
+            vertical: 'hidden',
+            horizontal: 'hidden',
+          },
+          scrollBeyondLastLine: false,
+          overviewRulerLanes: 0,
+          overviewRulerBorder: false,
+        }}
+        onChange={(value) => handleTextareaChange(value)}
+      />
+      {/* <textarea value={npmrc.join('\n')} onChange={handleTextareaChange} rows={20} cols={80} /> */}
     </div>
   )
 }
