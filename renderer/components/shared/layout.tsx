@@ -1,6 +1,7 @@
 import { Layout, Menu, MenuProps } from 'antd'
 import Link from 'next/link'
 import { SIDE_MENU } from '../../constants'
+import { useRouter } from 'next/router'
 
 interface LayoutComponentProps {
   children: React.ReactNode
@@ -26,9 +27,12 @@ namespace SideMenu {
   })
 
   export function Component() {
+    const router = useRouter()
+    const pathname = router.pathname.split('/')[1]
+
     return (
       <Layout.Sider theme="light">
-        <Menu items={sideMenus} theme="light" mode="inline" />
+        <Menu items={sideMenus} theme="light" mode="inline" defaultSelectedKeys={[pathname]} />
       </Layout.Sider>
     )
   }
