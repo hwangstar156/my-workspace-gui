@@ -16,10 +16,14 @@ export function NvmEditor() {
         const homeDir = await window.api.getHomeDir()
         const nvmrcPath = `${homeDir}/.nvmrc`
 
-        const currentVersion = (await window.npmrcAPI.readNpmrc(nvmrcPath)).content.trim() as string
-        const remoteVersions = (
-          (await window.nvmAPI.command('nvm ls-remote --no-colors')) as string
-        )
+        const [currentVersion, remoteVersions, installedVersions] = await Promise.all([
+          window.npmrcAPI.readNpmrc(nvmrcPath),
+          window.nvmAPI.command('nvm ls-remote --no-colors'),
+          window.nvmAPI.command('nvm ls --no-colors'),
+        ])
+
+        const parsedCurrentVersion = currentVersion.content.trim() as string
+        const parsedRemoteVersions = (remoteVersions as string)
           .split('\n')
           .map((line) => line.trim().replace(/[\s->]/g, ''))
           .map((line) => line.replace('*', ''))
@@ -27,20 +31,20 @@ export function NvmEditor() {
           .filter(Boolean)
           .filter((v) => Number(v.split('v')[1].split('.')[0]) >= 14)
 
-        const installedVersions = ((await window.nvmAPI.command('nvm ls --no-colors')) as string)
+        const parsedInstalledVersions = (installedVersions as string)
           .split('\n')
           .map((line) => line.trim().replace(/[\s->]/g, ''))
           .map((line) => line.replace('*', ''))
           .filter((line: string) => line.startsWith('v'))
 
-        const versions = remoteVersions
+        const versions = parsedRemoteVersions
           .map((version) => {
             const status = (function () {
-              if (version.includes(currentVersion)) {
+              if (version.includes(parsedCurrentVersion)) {
                 return 'current'
               }
 
-              if (installedVersions.includes(version)) {
+              if (parsedInstalledVersions.includes(version)) {
                 return 'installed'
               }
 
