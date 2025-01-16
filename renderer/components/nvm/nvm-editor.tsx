@@ -7,8 +7,10 @@ export function NvmEditor() {
   useEffect(() => {
     async function fetchFilteredVersions() {
       try {
-        const currentVersion = (await window.nvmAPI.getCurrentVersion()) as string
-        console.log(currentVersion)
+        const homeDir = await window.api.getHomeDir()
+        const nvmrcPath = `${homeDir}/.nvmrc`
+
+        const currentVersion = (await window.npmrcAPI.readNpmrc(nvmrcPath)).content.trim() as string
         const remoteVersions = (
           (await window.nvmAPI.command('nvm ls-remote --no-colors')) as string
         )
@@ -68,18 +70,15 @@ export function NvmEditor() {
 
     await window.npmrcAPI.writeNpmrc(nvmrcFilePath, version)
 
-    if (status === 'installed') {
-      await window.terminalAPI.openTerminal(`nvm use`)
-    } else {
-      await window.terminalAPI.openTerminal(`nvm install ${version} && nvm use`)
-    }
+    await window.nvmAPI.setNodeVersion(version, status === 'installed')
 
-    alert(`${version} 버전이 활성화되었습니다.`)
+    await window.terminalAPI.openTerminal(`source ~/.bashrc`)
+    alert(`${version} 버전이 활성화되었습니다. 변경된 버전은 새로운 터미널에서 확인할 수 있습니다.`)
+    window.location.reload()
   }
 
   return (
     <div>
-      <h1>Node.js Version Manager (14 이상)</h1>
       <ul>
         {versions.map(({ version, status }) => (
           <li key={version} onClick={() => handleVersionSelect(version, status)}>
