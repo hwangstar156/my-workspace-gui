@@ -114,21 +114,29 @@ const runOpenTerminalCommand = (command) => {
 
 const updateBashrc = (version) => {
   const bashrcPath = path.join(os.homedir(), '.bashrc')
+
+  const exportVersionCommand = `
+    version=${version}
+  `
+
   const nvmCommand = `
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"
 
-    nvm use ${version}
-    nvm alias default ${version}
+    nvm use $version
+    nvm alias default $version
   `
 
   const bashrcContent = fs.existsSync(bashrcPath) ? fs.readFileSync(bashrcPath, 'utf8') : ''
-  if (!bashrcContent.includes(`nvm use ${version}`)) {
+
+  if (!bashrcContent.includes(`nvm use`)) {
+    fs.appendFileSync(bashrcPath, exportVersionCommand)
     fs.appendFileSync(bashrcPath, nvmCommand)
-    console.log(`.bashrc updated to use Node.js version ${version}`)
-  } else {
-    console.log('.bashrc already contains the NVM configuration.')
+    return
   }
+
+  const updatedContent = bashrcContent.replace(/^\s*version=.*$/m, exportVersionCommand)
+  fs.writeFileSync(bashrcPath, updatedContent)
 }
 
 const installAndUseNodeVersion = async (version, isInstalled) => {
