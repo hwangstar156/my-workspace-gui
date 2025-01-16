@@ -5,7 +5,7 @@ export const SIDE_MENU = [
     href: '/npmrc',
   },
   {
-    key: 'node-version-manager',
+    key: 'nvm',
     label: 'node version manager',
     href: '/nvm',
   },
