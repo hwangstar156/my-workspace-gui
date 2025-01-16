@@ -112,6 +112,50 @@ const runOpenTerminalCommand = (command) => {
   })
 }
 
+const updateBashrc = (version) => {
+  const bashrcPath = path.join(os.homedir(), '.bashrc')
+  const nvmCommand = `
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \\. "$NVM_DIR/nvm.sh"
+
+    nvm use ${version}
+    nvm alias default ${version}
+  `
+
+  const bashrcContent = fs.existsSync(bashrcPath) ? fs.readFileSync(bashrcPath, 'utf8') : ''
+  if (!bashrcContent.includes(`nvm use ${version}`)) {
+    fs.appendFileSync(bashrcPath, nvmCommand)
+    console.log(`.bashrc updated to use Node.js version ${version}`)
+  } else {
+    console.log('.bashrc already contains the NVM configuration.')
+  }
+}
+
+const installAndUseNodeVersion = async (version, isInstalled) => {
+  try {
+    if (!isInstalled) {
+      console.log(`Installing Node.js version ${version}...`)
+      await runNvmCommand(`nvm install ${version}`)
+    }
+
+    console.log(`Using Node.js version ${version}...`)
+    await runNvmCommand(`nvm use ${version}`)
+    updateBashrc(version)
+    return `Node.js ${version} is now active.`
+  } catch (error) {
+    throw new Error(`Failed to set Node.js ${version}: ${error}`)
+  }
+}
+
+ipcMain.handle('nvm-set-version', async (event, version, isInstalled) => {
+  try {
+    const result = await installAndUseNodeVersion(version, isInstalled)
+    return result
+  } catch (error) {
+    throw error.message
+  }
+})
+
 ipcMain.handle('open-terminal', async (event, command) => {
   try {
     const result = await runOpenTerminalCommand(command)

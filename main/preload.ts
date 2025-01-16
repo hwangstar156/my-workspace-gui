@@ -12,6 +12,8 @@ const apiHandler = {
 
 const nvmHandler = {
   command: async (command: string) => ipcRenderer.invoke('nvm-command', command),
+  setNodeVersion: async (version: string, isInstalled: boolean) =>
+    ipcRenderer.invoke('nvm-set-version', version, isInstalled),
   getCurrentVersion: async () => ipcRenderer.invoke('get-current-node-version'),
 }
 
