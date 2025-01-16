@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react'
 import { SwitchCase } from '../shared/switch-case'
+import { List, Avatar, Button } from 'antd'
+
+type Version = {
+  version: string
+  status: 'installed' | 'not-installed' | 'current'
+}
 
 export function NvmEditor() {
-  const [versions, setVersions] = useState([])
+  const [versions, setVersions] = useState<Version[]>([])
 
   useEffect(() => {
     async function fetchFilteredVersions() {
@@ -41,7 +47,7 @@ export function NvmEditor() {
               return 'not-installed'
             })()
 
-            return { version, status }
+            return { version, status } as const
           })
           .sort((a, b) => {
             const priority = { current: 0, installed: 1, 'not-installed': 2 }
@@ -64,7 +70,7 @@ export function NvmEditor() {
     fetchFilteredVersions()
   }, [])
 
-  const handleVersionSelect = async (version: string, status: 'installed' | 'not-installed') => {
+  const handleVersionSelect = async ({ status, version }: Version) => {
     const homeDir = await window.api.getHomeDir()
     const nvmrcFilePath = `${homeDir}/.nvmrc`
 
@@ -78,23 +84,54 @@ export function NvmEditor() {
   }
 
   return (
-    <div>
-      <ul>
-        {versions.map(({ version, status }) => (
-          <li key={version} onClick={() => handleVersionSelect(version, status)}>
-            {version}
-            <SwitchCase
-              value={status}
-              caseBy={{
-                installed: <span style={{ color: 'green' }}> (installed)</span>,
-                current: <span style={{ color: 'blue' }}> (current)</span>,
-                'not-installed': <span style={{ color: 'red' }}> (not installed)</span>,
-              }}
-              defaultComponent={null}
-            />
-          </li>
-        ))}
-      </ul>
-    </div>
+    <List
+      style={{ height: '100%', overflow: 'auto' }}
+      itemLayout="horizontal"
+      dataSource={versions}
+      renderItem={(item, index) => (
+        <List.Item style={{ display: 'flex', alignItems: 'center', padding: '20px' }}>
+          <List.Item.Meta
+            avatar={<Avatar src={`/images/nodejs.png`} />}
+            title={item.version}
+            description={
+              <SwitchCase
+                value={item.status}
+                caseBy={{
+                  installed: <span style={{ color: '#78C257' }}>installed</span>,
+                  current: <span style={{ color: '#1DA1F2' }}>current</span>,
+                  'not-installed': <span style={{ color: '#FF5A5F' }}>not installed</span>,
+                }}
+                defaultComponent={null}
+              />
+            }
+          />
+          <SwitchCase
+            value={item.status}
+            caseBy={{
+              installed: (
+                <Button
+                  variant="outlined"
+                  color="green"
+                  onClick={() => handleVersionSelect({ ...item })}
+                >
+                  적용하기
+                </Button>
+              ),
+              current: <Button disabled>현재버전</Button>,
+              'not-installed': (
+                <Button
+                  variant="outlined"
+                  color="red"
+                  onClick={() => handleVersionSelect({ ...item })}
+                >
+                  설치 후 적용하기
+                </Button>
+              ),
+            }}
+            defaultComponent={null}
+          />
+        </List.Item>
+      )}
+    />
   )
 }
