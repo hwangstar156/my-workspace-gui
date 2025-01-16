@@ -2,7 +2,7 @@ import path from 'path'
 import os from 'os'
 import fs from 'fs'
 import { exec } from 'child_process'
-import { app, ipcMain } from 'electron'
+import { app, ipcMain, nativeTheme } from 'electron'
 import serve from 'electron-serve'
 import { createWindow } from './helpers'
 
@@ -18,15 +18,21 @@ if (isProd) {
   await app.whenReady()
 
   const mainWindow = createWindow('main', {
-    width: 1000,
-    height: 600,
+    width: 800,
+    height: 480,
+    minWidth: 300,
+    minHeight: 200,
+    hasShadow: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      spellcheck: true,
     },
   })
 
+  nativeTheme.themeSource = 'light'
+
   if (isProd) {
-    await mainWindow.loadURL('app://./home')
+    await mainWindow.loadURL('app://./npmrc')
   } else {
     const port = process.argv[2]
     await mainWindow.loadURL(`http://localhost:${port}/npmrc`)
