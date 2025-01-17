@@ -13,6 +13,13 @@ export function NvmEditor() {
   useEffect(() => {
     async function fetchFilteredVersions() {
       try {
+        const nvmCache = await window.nvmAPI.getCache('versions')
+
+        if (nvmCache) {
+          setVersions(nvmCache)
+          return
+        }
+
         const homeDir = await window.api.getHomeDir()
         const nvmrcPath = `${homeDir}/.nvmrc`
 
@@ -65,6 +72,8 @@ export function NvmEditor() {
             return versionToNumber(b.version) - versionToNumber(a.version)
           })
 
+        await window.nvmAPI.setCache('versions', versions)
+
         setVersions(versions)
       } catch (error) {
         console.error('버전 정보를 가져오지 못했습니다.', error)
@@ -84,12 +93,14 @@ export function NvmEditor() {
 
     await window.terminalAPI.openTerminal(`source ~/.bashrc`)
     alert(`${version} 버전이 활성화되었습니다. 변경된 버전은 새로운 터미널에서 확인할 수 있습니다.`)
+    await window.nvmAPI.clearCache()
     window.location.reload()
   }
 
   return (
     <List
-      style={{ height: '100%', overflow: 'auto' }}
+      style={{ height: '100vh', overflow: 'auto' }}
+      loading={versions.length === 0}
       itemLayout="horizontal"
       dataSource={versions}
       renderItem={(item, index) => (
