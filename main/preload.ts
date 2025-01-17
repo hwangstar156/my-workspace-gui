@@ -15,6 +15,9 @@ const nvmHandler = {
   setNodeVersion: async (version: string, isInstalled: boolean) =>
     ipcRenderer.invoke('nvm-set-version', version, isInstalled),
   getCurrentVersion: async () => ipcRenderer.invoke('get-current-node-version'),
+  getCache: async (key: string) => ipcRenderer.invoke('get-cache', key),
+  setCache: async (key: string, value: any) => ipcRenderer.invoke('set-cache', key, value),
+  clearCache: async () => ipcRenderer.invoke('clear-cache'),
 }
 
 const terminalHandler = {
