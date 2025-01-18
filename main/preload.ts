@@ -26,6 +26,10 @@ const terminalHandler = {
 
 const projectHandler = {
   getProject: async () => ipcRenderer.invoke('selectProjectPath'),
+  getDependencies: async (projectPath: string) =>
+    ipcRenderer.invoke('get-dependencies', projectPath),
+  getPackageInfo: async (packageName: string) =>
+    ipcRenderer.invoke('get-package-info', packageName),
 }
 
 const storeHandler = {

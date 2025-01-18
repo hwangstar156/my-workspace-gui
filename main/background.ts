@@ -6,6 +6,7 @@ import { app, ipcMain, nativeTheme, dialog } from 'electron'
 import serve from 'electron-serve'
 import { createWindow } from './helpers'
 import Store from 'electron-store'
+import { detect } from 'detect-package-manager'
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -75,6 +76,45 @@ ipcMain.handle('selectProjectPath', async () => {
   }
 
   return result.filePaths[0] // 선택된 디렉토리 경로 반환
+})
+
+ipcMain.handle('get-dependencies', async (event, projectPath) => {
+  return new Promise((resolve, reject) => {
+    detect({ cwd: projectPath }).then((packageManager) => {
+      exec(`${packageManager} install`, { cwd: projectPath })
+
+      exec(`npm list --depth=0 --json`, { cwd: projectPath }, (error, stdout, stderr) => {
+        if (error) {
+          reject(stderr || error.message)
+          return
+        }
+
+        const result = JSON.parse(stdout)
+        const dependencies = result.dependencies
+          ? Object.entries(result.dependencies).map(([name, details]) => ({
+              name,
+              version: details.version,
+            }))
+          : []
+
+        console.log(dependencies)
+        resolve(dependencies)
+      })
+    })
+  })
+})
+
+ipcMain.handle('get-package-info', async (event, packageName) => {
+  return new Promise((resolve, reject) => {
+    exec(`npm view ${packageName} --json`, (error, stdout, stderr) => {
+      if (error) {
+        reject(stderr || error.message)
+        return
+      }
+
+      resolve(JSON.parse(stdout))
+    })
+  })
 })
 
 ipcMain.handle('set-cache', async (event, key, value) => {
