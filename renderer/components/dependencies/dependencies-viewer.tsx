@@ -1,9 +1,11 @@
 import { Button, List } from 'antd'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { v4 as uuidv4 } from 'uuid'
 
 export function DependenciesViewer() {
-  const [projectPaths, setProjectPaths] = useState<string[]>([])
+  const [projectPaths, setProjectPaths] = useState<{ id: string; path: string }[]>([])
 
   useEffect(() => {
     const fetchProjectPaths = async () => {
@@ -23,13 +25,15 @@ export function DependenciesViewer() {
       return
     }
 
+    const newItem = { id: uuidv4(), path: projectPath }
+
     if (!prevProjectPath || prevProjectPath.length === 0) {
-      await window.storeAPI.set('projectPath', [projectPath])
+      await window.storeAPI.set('projectPath', [newItem])
     } else {
-      window.storeAPI.set('projectPath', [...prevProjectPath, projectPath])
+      window.storeAPI.set('projectPath', [...prevProjectPath, newItem])
     }
 
-    setProjectPaths((prev) => [...prev, projectPath])
+    setProjectPaths((prev) => [...prev, newItem])
   }
 
   return (
@@ -46,7 +50,7 @@ export function DependenciesViewer() {
         dataSource={projectPaths}
         renderItem={(projectPath) => (
           <List.Item style={{ display: 'flex', alignItems: 'center', padding: '20px' }}>
-            {projectPath}
+            <Link href={`/dependencies/${projectPath.id}`}>{projectPath.path}</Link>
           </List.Item>
         )}
       />
