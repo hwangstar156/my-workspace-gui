@@ -9,4 +9,9 @@ export const SIDE_MENU = [
     label: 'node version manager',
     href: '/nvm',
   },
+  {
+    key: 'dependencies',
+    label: 'dependencies',
+    href: '/dependencies',
+  },
 ]
