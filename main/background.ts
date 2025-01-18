@@ -53,7 +53,6 @@ ipcMain.handle('store-set', async (event, key, value) => {
 
 ipcMain.handle('store-delete', async (event, key) => {
   store.delete(key)
-  store.clear()
 })
 
 const cache = new Map()
