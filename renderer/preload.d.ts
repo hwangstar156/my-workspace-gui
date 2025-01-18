@@ -1,4 +1,12 @@
-import { ApiHandler, IpcHandler, NpmrcHandler, NvmHandler, TerminalHandler } from '../main/preload'
+import {
+  ApiHandler,
+  IpcHandler,
+  NpmrcHandler,
+  NvmHandler,
+  ProjectHandler,
+  StoreHandler,
+  TerminalHandler,
+} from '../main/preload'
 
 declare global {
   interface Window {
@@ -6,5 +14,7 @@ declare global {
     api: ApiHandler
     nvmAPI: NvmHandler
     terminalAPI: TerminalHandler
+    projectAPI: ProjectHandler
+    storeAPI: StoreHandler
   }
 }
