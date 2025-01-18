@@ -2,9 +2,10 @@ import path from 'path'
 import os from 'os'
 import fs from 'fs'
 import { exec } from 'child_process'
-import { app, ipcMain, nativeTheme } from 'electron'
+import { app, ipcMain, nativeTheme, dialog } from 'electron'
 import serve from 'electron-serve'
 import { createWindow } from './helpers'
+import Store from 'electron-store'
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -40,6 +41,21 @@ if (isProd) {
   }
 })()
 
+const store = new Store()
+
+ipcMain.handle('store-get', async (event, key) => {
+  return store.get(key)
+})
+
+ipcMain.handle('store-set', async (event, key, value) => {
+  store.set(key, value)
+})
+
+ipcMain.handle('store-delete', async (event, key) => {
+  store.delete(key)
+  store.clear()
+})
+
 const cache = new Map()
 
 app.on('window-all-closed', () => {
@@ -48,6 +64,18 @@ app.on('window-all-closed', () => {
 
 ipcMain.on('message', async (event, arg) => {
   event.reply('message', `${arg} World!`)
+})
+
+ipcMain.handle('selectProjectPath', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+  })
+
+  if (result.canceled) {
+    return null
+  }
+
+  return result.filePaths[0] // 선택된 디렉토리 경로 반환
 })
 
 ipcMain.handle('set-cache', async (event, key, value) => {
