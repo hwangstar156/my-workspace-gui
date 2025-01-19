@@ -51,7 +51,7 @@ export function DependencyDetailInfo({
   }, [])
 
   if (!currentDependencyInfo || !latestDependencyInfo) {
-    return <div>Loading...</div>
+    return <Container>Loading...</Container>
   }
 
   const columns = [
@@ -77,13 +77,13 @@ export function DependencyDetailInfo({
       key: '1',
       type: 'Current',
       description: currentDependencyInfo.version,
-      unpackedSize: currentDependencyInfo.unpackedSize,
+      unpackedSize: bytoToKb(currentDependencyInfo.unpackedSize),
     },
     {
       key: '2',
       type: 'Latest',
       description: latestDependencyInfo.version,
-      unpackedSize: latestDependencyInfo.unpackedSize,
+      unpackedSize: bytoToKb(latestDependencyInfo.unpackedSize),
     },
   ]
 
@@ -123,3 +123,7 @@ const Title = styled.h1`
 const Description = styled.p`
   color: rgba(0, 0, 0, 0.45);
 `
+
+const bytoToKb = (bytes: number) => {
+  return (bytes / 1024).toFixed(2) + ' KB'
+}
