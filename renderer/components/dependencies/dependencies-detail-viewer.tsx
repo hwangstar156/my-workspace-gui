@@ -50,6 +50,7 @@ export function DependenciesDetailViewer() {
         style={{ height: '100vh', overflow: 'auto' }}
         itemLayout="horizontal"
         dataSource={dependencies}
+        loading={!dependencies.length}
         renderItem={(projectPath) => (
           <DependencyItem
             key={projectPath.name}
@@ -61,3 +62,7 @@ export function DependenciesDetailViewer() {
     </>
   )
 }
+
+// 로딩 처리
+// projectlist -> 삭제 가능
+// 프로젝트 선택시 중복안되도록, npm repository 아니면 안되도록 처리
