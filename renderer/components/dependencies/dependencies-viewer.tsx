@@ -1,14 +1,15 @@
 import { RightOutlined } from '@ant-design/icons'
-import { Button, List } from 'antd'
+import { Button, Checkbox, CheckboxChangeEvent, List } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
 import { DependencyHeader } from './header'
 
 export function DependenciesViewer() {
   const [projectPaths, setProjectPaths] = useState<{ id: string; path: string }[]>([])
+  const [checkedIdList, setCheckedIdList] = useState<string[]>([])
   const router = useRouter()
 
   useEffect(() => {
@@ -40,6 +41,29 @@ export function DependenciesViewer() {
     setProjectPaths((prev) => [...prev, newItem])
   }
 
+  const handleDeleteProject = async () => {
+    console.log(checkedIdList)
+    const newProjectPaths = projectPaths.filter(
+      (projectPath) => !checkedIdList.includes(projectPath.id)
+    )
+
+    await window.storeAPI.set('projectPath', newProjectPaths)
+
+    setProjectPaths(newProjectPaths)
+    setCheckedIdList([])
+  }
+
+  const handleChangeCheckBox = (e: CheckboxChangeEvent, checkedid: string) => {
+    const { checked } = e.target
+
+    if (checked) {
+      setCheckedIdList((prev) => [...prev, checkedid])
+      return
+    }
+
+    setCheckedIdList((prev) => prev.filter((id) => id !== checkedid))
+  }
+
   const handleClickListItem = (dependencyId: string) => {
     router.push(`/dependencies/${dependencyId}`)
   }
@@ -49,9 +73,19 @@ export function DependenciesViewer() {
       <DependencyHeader
         title="Project List"
         right={
-          <Button type="primary" onClick={handleAddProject} style={{ marginLeft: 'auto' }}>
-            Add Project
-          </Button>
+          <>
+            <Button type="primary" onClick={handleAddProject} style={{ marginLeft: 'auto' }}>
+              Add Project
+            </Button>
+            <Button
+              onClick={handleDeleteProject}
+              type="primary"
+              danger
+              style={{ marginLeft: '10px' }}
+            >
+              Delete Project
+            </Button>
+          </>
         }
       ></DependencyHeader>
       <List
@@ -59,9 +93,11 @@ export function DependenciesViewer() {
         itemLayout="horizontal"
         dataSource={projectPaths}
         renderItem={(projectPath) => (
-          <StyledListItem onClick={() => handleClickListItem(projectPath.id)}>
-            {projectPath.path}
-            <RightOutlined />
+          <StyledListItem>
+            <Checkbox onChange={(e) => handleChangeCheckBox(e, projectPath.id)}>
+              {projectPath.path}
+            </Checkbox>
+            <RightOutlined onClick={() => handleClickListItem(projectPath.id)} />
           </StyledListItem>
         )}
       />
