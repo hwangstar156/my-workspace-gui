@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { DependencyItem } from './dependency-item'
 import { DependencyHeader } from './header'
+import { BackButton } from '../shared/back-button'
 
 export function DependenciesDetailViewer() {
   const [dependencies, setDependencies] = useState<{ name: string; version: string }[]>([])
@@ -44,7 +45,7 @@ export function DependenciesDetailViewer() {
 
   return (
     <>
-      <DependencyHeader title={projectPath} />
+      <DependencyHeader title={projectPath} left={<BackButton />} />
       <List
         style={{ height: '100vh', overflow: 'auto' }}
         itemLayout="horizontal"
