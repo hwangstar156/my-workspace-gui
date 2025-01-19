@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.22.1",
+    "@ant-design/icons": "^5.5.2",
     "@monaco-editor/react": "^4.6.0",
     "antd": "^5.23.0",
     "detect-package-manager": "^3.0.2",
