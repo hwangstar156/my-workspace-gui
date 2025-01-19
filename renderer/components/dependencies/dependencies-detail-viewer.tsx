@@ -2,9 +2,11 @@ import { List } from 'antd'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { DependencyItem } from './dependency-item'
+import { DependencyHeader } from './header'
 
 export function DependenciesDetailViewer() {
   const [dependencies, setDependencies] = useState<{ name: string; version: string }[]>([])
+  const [projectPath, setProjectPath] = useState('')
   const router = useRouter()
   const id = router.query.id
 
@@ -20,6 +22,8 @@ export function DependenciesDetailViewer() {
       if (!currentProjectPath) {
         return
       }
+
+      setProjectPath(currentProjectPath.path)
 
       const { data, currentHash } = await window.cacheAPI.getDependencies(currentProjectPath.path)
 
@@ -39,19 +43,20 @@ export function DependenciesDetailViewer() {
   }, [])
 
   return (
-    <List
-      style={{ height: '100vh', overflow: 'auto' }}
-      itemLayout="horizontal"
-      dataSource={dependencies}
-      renderItem={(projectPath) => (
-        <DependencyItem
-          key={projectPath.name}
-          name={projectPath.name}
-          version={projectPath.version}
-        />
-      )}
-    />
+    <>
+      <DependencyHeader title={projectPath} />
+      <List
+        style={{ height: '100vh', overflow: 'auto' }}
+        itemLayout="horizontal"
+        dataSource={dependencies}
+        renderItem={(projectPath) => (
+          <DependencyItem
+            key={projectPath.name}
+            name={projectPath.name}
+            version={projectPath.version}
+          />
+        )}
+      />
+    </>
   )
 }
-
-const getCachedData = () => {}

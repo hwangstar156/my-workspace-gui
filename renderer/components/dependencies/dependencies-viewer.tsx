@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
+import { DependencyHeader } from './header'
 
 export function DependenciesViewer() {
   const [projectPaths, setProjectPaths] = useState<{ id: string; path: string }[]>([])
@@ -45,12 +46,11 @@ export function DependenciesViewer() {
 
   return (
     <>
-      <Container>
-        <Text>Project List</Text>
-        <Button onClick={handleAddProject} style={{ marginLeft: 'auto' }}>
-          Add Project Path
+      <DependencyHeader title="Project List">
+        <Button type="primary" onClick={handleAddProject} style={{ marginLeft: 'auto' }}>
+          Add Project
         </Button>
-      </Container>
+      </DependencyHeader>
       <List
         style={{ height: '100vh', overflow: 'auto' }}
         itemLayout="horizontal"
@@ -65,18 +65,6 @@ export function DependenciesViewer() {
     </>
   )
 }
-
-const Text = styled.h1`
-  font-size: 14px;
-  font-weight: 700;
-`
-
-const Container = styled.div`
-  display: flex;
-  padding: 15px;
-  background-color: #fff;
-  align-items: center;
-`
 
 const StyledListItem = styled(List.Item)`
   display: flex !important;
