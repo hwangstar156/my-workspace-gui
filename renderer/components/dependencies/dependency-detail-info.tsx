@@ -149,6 +149,10 @@ const Description = styled.p`
   color: rgba(0, 0, 0, 0.45);
 `
 
-const bytoToKb = (bytes: number) => {
+const bytoToKb = (bytes?: number) => {
+  if (!bytes) {
+    return 'UNKNOWN'
+  }
+
   return (bytes / 1024).toFixed(2) + ' KB'
 }
