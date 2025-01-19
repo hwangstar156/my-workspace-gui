@@ -1,15 +1,17 @@
 import styled from 'styled-components'
 
 interface DependencyHeaderProps {
+  left?: React.ReactNode
   title: string
-  children?: React.ReactNode
+  right?: React.ReactNode
 }
 
-export function DependencyHeader({ title, children }: DependencyHeaderProps) {
+export function DependencyHeader({ title, right, left }: DependencyHeaderProps) {
   return (
     <Container>
+      {left}
       <Text>{title}</Text>
-      {children}
+      {right}
     </Container>
   )
 }

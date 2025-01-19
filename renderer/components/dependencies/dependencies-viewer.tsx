@@ -46,11 +46,14 @@ export function DependenciesViewer() {
 
   return (
     <>
-      <DependencyHeader title="Project List">
-        <Button type="primary" onClick={handleAddProject} style={{ marginLeft: 'auto' }}>
-          Add Project
-        </Button>
-      </DependencyHeader>
+      <DependencyHeader
+        title="Project List"
+        right={
+          <Button type="primary" onClick={handleAddProject} style={{ marginLeft: 'auto' }}>
+            Add Project
+          </Button>
+        }
+      ></DependencyHeader>
       <List
         style={{ height: '100vh', overflow: 'auto' }}
         itemLayout="horizontal"
