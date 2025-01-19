@@ -1,7 +1,5 @@
 <img width="128" src="resources/nwg.png" style="display: block; margin: 0 auto"/>
 
-<br />
-
 # Node Workspace GUI
 
 A modern **GUI tool** designed to simplify the management of your Node.js environment and project dependencies. This tool provides an intuitive interface for handling `.npmrc` settings, managing Node.js versions, and exploring project dependencies.
