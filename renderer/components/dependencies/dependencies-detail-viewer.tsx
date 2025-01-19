@@ -1,7 +1,7 @@
 import { List } from 'antd'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { DependencyDetailInfo } from './dependency-detail-info'
+import { DependencyItem } from './dependency-item'
 
 export function DependenciesDetailViewer() {
   const [dependencies, setDependencies] = useState<{ name: string; version: string }[]>([])
@@ -34,18 +34,12 @@ export function DependenciesDetailViewer() {
       style={{ height: '100vh', overflow: 'auto' }}
       itemLayout="horizontal"
       dataSource={dependencies}
-      renderItem={(projectPath, idx) => (
-        <>
-          <List.Item style={{ display: 'flex', alignItems: 'center', padding: '20px' }}>
-            <List.Item.Meta title={projectPath.name} description={projectPath.version} />
-          </List.Item>
-          <List.Item style={{ backgroundColor: '#fff' }}>
-            <DependencyDetailInfo
-              dependencyName={projectPath.name}
-              dependencyVersion={projectPath.version}
-            />
-          </List.Item>
-        </>
+      renderItem={(projectPath) => (
+        <DependencyItem
+          key={projectPath.name}
+          name={projectPath.name}
+          version={projectPath.version}
+        />
       )}
     />
   )
