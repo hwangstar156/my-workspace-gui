@@ -1,11 +1,14 @@
+import { RightOutlined } from '@ant-design/icons'
 import { Button, List } from 'antd'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { v4 as uuidv4 } from 'uuid'
 
 export function DependenciesViewer() {
   const [projectPaths, setProjectPaths] = useState<{ id: string; path: string }[]>([])
+  const router = useRouter()
 
   useEffect(() => {
     const fetchProjectPaths = async () => {
@@ -36,6 +39,10 @@ export function DependenciesViewer() {
     setProjectPaths((prev) => [...prev, newItem])
   }
 
+  const handleClickListItem = (dependencyId: string) => {
+    router.push(`/dependencies/${dependencyId}`)
+  }
+
   return (
     <>
       <Container>
@@ -49,9 +56,10 @@ export function DependenciesViewer() {
         itemLayout="horizontal"
         dataSource={projectPaths}
         renderItem={(projectPath) => (
-          <List.Item style={{ display: 'flex', alignItems: 'center', padding: '20px' }}>
-            <Link href={`/dependencies/${projectPath.id}`}>{projectPath.path}</Link>
-          </List.Item>
+          <StyledListItem onClick={() => handleClickListItem(projectPath.id)}>
+            {projectPath.path}
+            <RightOutlined />
+          </StyledListItem>
         )}
       />
     </>
@@ -68,4 +76,16 @@ const Container = styled.div`
   padding: 15px;
   background-color: #fff;
   align-items: center;
+`
+
+const StyledListItem = styled(List.Item)`
+  display: flex !important;
+  align-items: center !important;
+  padding: 20px !important;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f0f0f0;
+    color: #1890ff;
+  }
 `
