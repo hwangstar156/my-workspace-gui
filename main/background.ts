@@ -88,11 +88,13 @@ ipcMain.handle('selectProjectPath', async () => {
   if (result.canceled) {
     return null
   }
-  const selectedPath = result.filePaths[0] // 선택된 디렉토리 경로
-  const packageJsonPath = path.join(selectedPath, 'package.json') // package.json 경로 생성
+
+  const selectedPath = result.filePaths[0]
+  const packageJsonPath = path.join(selectedPath, 'package.json')
 
   try {
     await fsAsync.access(packageJsonPath)
+
     return { path: selectedPath }
   } catch (err) {
     return { error: 'package.json이 없는 repository입니다.' }
