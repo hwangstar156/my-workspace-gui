@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Button, Table } from 'antd'
+import { Button, Spin, Table } from 'antd'
 
 interface DependencyDetailInfoProps {
   dependencyName: string
@@ -20,42 +20,59 @@ export function DependencyDetailInfo({
 }: DependencyDetailInfoProps) {
   const [currentDependencyInfo, setCurrentDependencyInfo] = useState<DependencyInfo | null>(null)
   const [latestDependencyInfo, setLatestDependencyInfo] = useState<DependencyInfo | null>(null)
+  const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
-    async function fetchCurrentDependencyInfo() {
-      const dependency = await window.projectAPI.getPackageInfo(
-        `${dependencyName}@${dependencyVersion}`
-      )
-
-      setCurrentDependencyInfo({
-        name: dependency.name,
-        version: dependency.version,
-        description: dependency.description,
-        unpackedSize: dependency['dist.unpackedSize'],
-      })
+    function fetchCurrentDependencyInfo() {
+      window.projectAPI
+        .getPackageInfo(`${dependencyName}@${dependencyVersion}`)
+        .then((dependency) => {
+          setCurrentDependencyInfo({
+            name: dependency.name,
+            version: dependency.version,
+            description: dependency.description,
+            unpackedSize: dependency['dist.unpackedSize'],
+          })
+        })
+        .catch((e) => {
+          setError(e)
+        })
     }
 
-    async function fetchLatestDependencyInfo() {
-      const latestDependency = await window.projectAPI.getPackageInfo(dependencyName)
-
-      setLatestDependencyInfo({
-        name: latestDependency.name,
-        version: latestDependency.version,
-        description: latestDependency.description,
-        unpackedSize: latestDependency['dist.unpackedSize'],
-      })
+    function fetchLatestDependencyInfo() {
+      window.projectAPI
+        .getPackageInfo(dependencyName)
+        .then((dependency) => {
+          setLatestDependencyInfo({
+            name: dependency.name,
+            version: dependency.version,
+            description: dependency.description,
+            unpackedSize: dependency['dist.unpackedSize'],
+          })
+        })
+        .catch((e) => {
+          setError(e)
+        })
     }
 
     fetchCurrentDependencyInfo()
     fetchLatestDependencyInfo()
-  }, [])
+  }, [dependencyName, dependencyVersion])
 
   const handleClickLinkToDocs = () => {
     window.projectAPI.linkToDocs(dependencyName)
   }
 
+  if (error) {
+    return <Container style={{ color: '#ff7875' }}>인증 에러 발생</Container>
+  }
+
   if (!currentDependencyInfo || !latestDependencyInfo) {
-    return <Container>Loading...</Container>
+    return (
+      <Container>
+        <Spin />
+      </Container>
+    )
   }
 
   const columns = [
