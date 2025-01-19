@@ -1,7 +1,7 @@
 import path from 'path'
 import os from 'os'
 import fs from 'fs'
-import { exec } from 'child_process'
+import { exec, spawn } from 'child_process'
 import { app, ipcMain, nativeTheme, dialog } from 'electron'
 import serve from 'electron-serve'
 import { createWindow } from './helpers'
@@ -106,13 +106,39 @@ ipcMain.handle('get-dependencies', async (event, projectPath) => {
 
 ipcMain.handle('get-package-info', async (event, packageName) => {
   return new Promise((resolve, reject) => {
-    exec(`npm view ${packageName} --json`, (error, stdout, stderr) => {
-      if (error) {
-        reject(stderr || error.message)
+    const child = spawn('npm', [
+      'view',
+      packageName,
+      'name',
+      'version',
+      'description',
+      'dist.unpackedSize',
+      '--json',
+    ])
+
+    let stdout = ''
+    let stderr = ''
+
+    child.stdout.on('data', (data) => {
+      stdout += data
+    })
+
+    child.stderr.on('data', (data) => {
+      stderr += data
+    })
+
+    child.on('close', (code) => {
+      if (code !== 0) {
+        reject(stderr || `Process exited with code ${code}`)
         return
       }
 
-      resolve(JSON.parse(stdout))
+      try {
+        const result = JSON.parse(stdout)
+        resolve(result)
+      } catch (error) {
+        reject(`Failed to parse JSON: ${error.message}`)
+      }
     })
   })
 })
