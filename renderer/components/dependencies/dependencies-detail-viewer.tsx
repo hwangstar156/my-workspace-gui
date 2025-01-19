@@ -38,12 +38,12 @@ export function DependenciesDetailViewer() {
         <>
           <List.Item style={{ display: 'flex', alignItems: 'center', padding: '20px' }}>
             <List.Item.Meta title={projectPath.name} description={projectPath.version} />
-            {idx === 0 ? (
-              <DependencyDetailInfo
-                dependencyName={projectPath.name}
-                dependencyVersion={projectPath.version}
-              />
-            ) : null}
+          </List.Item>
+          <List.Item style={{ backgroundColor: '#fff' }}>
+            <DependencyDetailInfo
+              dependencyName={projectPath.name}
+              dependencyVersion={projectPath.version}
+            />
           </List.Item>
         </>
       )}

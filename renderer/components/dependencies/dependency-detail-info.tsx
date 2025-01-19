@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import styled from 'styled-components'
+import { Button, Table } from 'antd'
 
 interface DependencyDetailInfoProps {
   dependencyName: string
@@ -46,32 +48,78 @@ export function DependencyDetailInfo({
 
     fetchCurrentDependencyInfo()
     fetchLatestDependencyInfo()
-
-    // name, version으로 조회
-    // description
-    // 제일 최신버전, 제일 최신버전의 unpackedSize
-    // 간단 한줄 설명 -> description
-    // dist.unpackedSize
-    // npm docs로 보여주기
-  })
+  }, [])
 
   if (!currentDependencyInfo || !latestDependencyInfo) {
     return <div>Loading...</div>
   }
 
+  const columns = [
+    {
+      title: 'Type',
+      dataIndex: 'type',
+      key: 'type',
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+    },
+    {
+      title: 'Unpacked Size',
+      dataIndex: 'unpackedSize',
+      key: 'unpackedSize',
+    },
+  ]
+
+  const dataSource = [
+    {
+      key: '1',
+      type: 'Current',
+      description: currentDependencyInfo.version,
+      unpackedSize: currentDependencyInfo.unpackedSize,
+    },
+    {
+      key: '2',
+      type: 'Latest',
+      description: latestDependencyInfo.version,
+      unpackedSize: latestDependencyInfo.unpackedSize,
+    },
+  ]
+
   return (
-    <div>
-      <h1>{currentDependencyInfo.name}</h1>
-      <h2>{currentDependencyInfo.version}</h2>
-      <p>{currentDependencyInfo.description}</p>
-      <p>{currentDependencyInfo.unpackedSize}</p>
+    <Container>
+      <Title>{currentDependencyInfo.name}</Title>
+      <Description>{currentDependencyInfo.description}</Description>
 
-      <h2>Latest</h2>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        style={{ marginTop: '15px' }}
+        pagination={false}
+      />
 
-      <h1>{latestDependencyInfo.name}</h1>
-      <h2>{latestDependencyInfo.version}</h2>
-      <p>{latestDependencyInfo.description}</p>
-      <p>{latestDependencyInfo.unpackedSize}</p>
-    </div>
+      <Button style={{ width: '80%', margin: '15px auto 0 auto' }} variant="filled">
+        Link to Docs
+      </Button>
+    </Container>
   )
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 10px 20px;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+`
+
+const Title = styled.h1`
+  font-size: 24px;
+  font-weight: 700;
+`
+
+const Description = styled.p`
+  color: rgba(0, 0, 0, 0.45);
+`
