@@ -35,6 +35,10 @@ export function DependenciesViewer() {
         return
       }
 
+      if (prevProjectPath && prevProjectPath.some((path) => path.path === projectPath.path)) {
+        throw new Error('이미 등록된 repository입니다.')
+      }
+
       const newItem = { id: uuidv4(), path: projectPath.path }
 
       if (!prevProjectPath || prevProjectPath.length === 0) {
