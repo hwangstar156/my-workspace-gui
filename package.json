@@ -1,9 +1,9 @@
 {
   "private": true,
-  "name": "my-workspace-gui",
-  "description": "My application description",
+  "name": "node-workspace-gui",
+  "description": "A modern GUI tool designed to simplify the management of your Node.js environment and project dependencies.",
   "version": "1.0.0",
-  "author": "Yoshihide Shiono <shiono.yoshihide@gmail.com>",
+  "author": "hwangstar156 <hwangstar156@gmail.com>",
   "main": "app/background.js",
   "scripts": {
     "dev": "nextron",
