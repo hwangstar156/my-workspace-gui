@@ -30,6 +30,7 @@ const projectHandler = {
     ipcRenderer.invoke('get-dependencies', projectPath),
   getPackageInfo: async (packageName: string) =>
     ipcRenderer.invoke('get-package-info', packageName),
+  linkToDocs: async (projectName: string) => ipcRenderer.invoke('link-to-docs', projectName),
 }
 
 const storeHandler = {

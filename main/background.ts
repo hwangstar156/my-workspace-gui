@@ -143,6 +143,18 @@ ipcMain.handle('get-package-info', async (event, packageName) => {
   })
 })
 
+ipcMain.handle('link-to-docs', async (event, projectName) => {
+  return new Promise((resolve, reject) => {
+    exec(`npm docs ${projectName}`, (error, stdout, stderr) => {
+      if (error) {
+        reject(stderr || error.message)
+        return
+      }
+
+      resolve(void 0)
+    })
+  })
+})
 ipcMain.handle('set-cache', async (event, key, value) => {
   cache.set(key, value)
 })

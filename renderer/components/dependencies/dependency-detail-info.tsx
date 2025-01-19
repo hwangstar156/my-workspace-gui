@@ -50,6 +50,10 @@ export function DependencyDetailInfo({
     fetchLatestDependencyInfo()
   }, [])
 
+  const handleClickLinkToDocs = () => {
+    window.projectAPI.linkToDocs(dependencyName)
+  }
+
   if (!currentDependencyInfo || !latestDependencyInfo) {
     return <Container>Loading...</Container>
   }
@@ -99,7 +103,11 @@ export function DependencyDetailInfo({
         pagination={false}
       />
 
-      <Button style={{ width: '80%', margin: '15px auto 0 auto' }} variant="filled">
+      <Button
+        style={{ width: '80%', margin: '15px auto 0 auto' }}
+        variant="filled"
+        onClick={handleClickLinkToDocs}
+      >
         Link to Docs
       </Button>
     </Container>
