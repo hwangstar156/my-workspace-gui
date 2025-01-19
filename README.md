@@ -1,7 +1,6 @@
 <img width="128" src="resources/nwg.png" style="display: block; margin: 0 auto"/>
 
 <br />
-<br />
 
 # Node Workspace GUI
 
