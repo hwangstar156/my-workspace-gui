@@ -1,6 +1,7 @@
 import path from 'path'
 import os from 'os'
 import fs from 'fs'
+import { promises as fsAsync } from 'fs'
 import { exec, spawn } from 'child_process'
 import { app, ipcMain, nativeTheme, dialog } from 'electron'
 import serve from 'electron-serve'
@@ -87,8 +88,15 @@ ipcMain.handle('selectProjectPath', async () => {
   if (result.canceled) {
     return null
   }
+  const selectedPath = result.filePaths[0] // 선택된 디렉토리 경로
+  const packageJsonPath = path.join(selectedPath, 'package.json') // package.json 경로 생성
 
-  return result.filePaths[0] // 선택된 디렉토리 경로 반환
+  try {
+    await fsAsync.access(packageJsonPath)
+    return { path: selectedPath }
+  } catch (err) {
+    return { error: 'package.json이 없는 repository입니다.' }
+  }
 })
 
 ipcMain.handle('get-dependencies', async (event, projectPath) => {

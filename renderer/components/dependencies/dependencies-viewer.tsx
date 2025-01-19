@@ -22,27 +22,34 @@ export function DependenciesViewer() {
   }, [])
 
   const handleAddProject = async () => {
-    const projectPath = await window.projectAPI.getProject()
+    try {
+      const projectPath = await window.projectAPI.getProject()
 
-    const prevProjectPath = await window.storeAPI.get('projectPath')
+      if (projectPath.error) {
+        throw new Error(projectPath.error)
+      }
 
-    if (!projectPath) {
-      return
+      const prevProjectPath = await window.storeAPI.get('projectPath')
+
+      if (!projectPath.path) {
+        return
+      }
+
+      const newItem = { id: uuidv4(), path: projectPath.path }
+
+      if (!prevProjectPath || prevProjectPath.length === 0) {
+        await window.storeAPI.set('projectPath', [newItem])
+      } else {
+        window.storeAPI.set('projectPath', [...prevProjectPath, newItem])
+      }
+
+      setProjectPaths((prev) => [...prev, newItem])
+    } catch (err) {
+      alert(err.message)
     }
-
-    const newItem = { id: uuidv4(), path: projectPath }
-
-    if (!prevProjectPath || prevProjectPath.length === 0) {
-      await window.storeAPI.set('projectPath', [newItem])
-    } else {
-      window.storeAPI.set('projectPath', [...prevProjectPath, newItem])
-    }
-
-    setProjectPaths((prev) => [...prev, newItem])
   }
 
   const handleDeleteProject = async () => {
-    console.log(checkedIdList)
     const newProjectPaths = projectPaths.filter(
       (projectPath) => !checkedIdList.includes(projectPath.id)
     )
@@ -65,7 +72,7 @@ export function DependenciesViewer() {
   }
 
   const handleClickListItem = (dependencyId: string) => {
-    router.push(`/dependencies/${dependencyId}`)
+    router.push(`/dependencies/${dependencyId}`, undefined, { shallow: true })
   }
 
   return (
