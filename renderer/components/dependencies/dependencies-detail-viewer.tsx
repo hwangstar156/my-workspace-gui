@@ -21,9 +21,18 @@ export function DependenciesDetailViewer() {
         return
       }
 
-      const dependencies = await window.projectAPI.getDependencies(currentProjectPath.path)
+      const { data, currentHash } = await window.cacheAPI.getDependencies(currentProjectPath.path)
 
-      setDependencies(dependencies)
+      if (data) {
+        setDependencies(data)
+        return
+      }
+
+      const newDependencies = await window.projectAPI.getDependencies(currentProjectPath.path)
+
+      await window.cacheAPI.setDependencies(currentProjectPath.path, newDependencies, currentHash)
+
+      setDependencies(newDependencies)
     }
 
     fetchAndSetDependencies()
@@ -44,3 +53,5 @@ export function DependenciesDetailViewer() {
     />
   )
 }
+
+const getCachedData = () => {}

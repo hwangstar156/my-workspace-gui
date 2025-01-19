@@ -39,6 +39,13 @@ const storeHandler = {
   delete: async (key: string) => ipcRenderer.invoke('store-delete', key),
 }
 
+const cacheHandler = {
+  getDependencies: async (filePath: string) =>
+    ipcRenderer.invoke('get-dependencies-cache', filePath),
+  setDependencies: async (filePath: string, data: any, currentHash: string) =>
+    ipcRenderer.invoke('set-dependencies-cache', filePath, data, currentHash),
+}
+
 contextBridge.exposeInMainWorld('npmrcAPI', npmrcHandler)
 
 contextBridge.exposeInMainWorld('api', apiHandler)
@@ -51,9 +58,12 @@ contextBridge.exposeInMainWorld('projectAPI', projectHandler)
 
 contextBridge.exposeInMainWorld('storeAPI', storeHandler)
 
+contextBridge.exposeInMainWorld('cacheAPI', cacheHandler)
+
 export type NpmrcHandler = typeof npmrcHandler
 export type ApiHandler = typeof apiHandler
 export type NvmHandler = typeof nvmHandler
 export type TerminalHandler = typeof terminalHandler
 export type ProjectHandler = typeof projectHandler
 export type StoreHandler = typeof storeHandler
+export type CacheHandler = typeof cacheHandler

@@ -7,6 +7,7 @@ import serve from 'electron-serve'
 import { createWindow } from './helpers'
 import Store from 'electron-store'
 import { detect } from 'detect-package-manager'
+import { getCachedData, setCachedData } from './cache'
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -58,6 +59,18 @@ ipcMain.handle('store-delete', async (event, key) => {
 
 const cache = new Map()
 
+ipcMain.handle('set-cache', async (event, key, value) => {
+  cache.set(key, value)
+})
+
+ipcMain.handle('get-cache', async (event, key) => {
+  return cache.get(key)
+})
+
+ipcMain.handle('clear-cache', async () => {
+  cache.clear()
+})
+
 app.on('window-all-closed', () => {
   app.quit()
 })
@@ -102,6 +115,23 @@ ipcMain.handle('get-dependencies', async (event, projectPath) => {
       })
     })
   })
+})
+
+ipcMain.handle('get-dependencies-cache', async (event, filePath) => {
+  try {
+    return await getCachedData(filePath)
+  } catch (error) {
+    return `Error: ${error.message}`
+  }
+})
+
+ipcMain.handle('set-dependencies-cache', async (event, filePath, data, currentHash) => {
+  try {
+    await setCachedData(filePath, data, currentHash)
+    return 'Success'
+  } catch (error) {
+    return `Error: ${error.message}`
+  }
 })
 
 ipcMain.handle('get-package-info', async (event, packageName) => {
@@ -154,17 +184,6 @@ ipcMain.handle('link-to-docs', async (event, projectName) => {
       resolve(void 0)
     })
   })
-})
-ipcMain.handle('set-cache', async (event, key, value) => {
-  cache.set(key, value)
-})
-
-ipcMain.handle('get-cache', async (event, key) => {
-  return cache.get(key)
-})
-
-ipcMain.handle('clear-cache', async () => {
-  cache.clear()
 })
 
 ipcMain.handle('get-current-node-version', () => {

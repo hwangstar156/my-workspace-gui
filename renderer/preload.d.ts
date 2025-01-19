@@ -1,5 +1,6 @@
 import {
   ApiHandler,
+  CacheHandler,
   IpcHandler,
   NpmrcHandler,
   NvmHandler,
@@ -16,5 +17,6 @@ declare global {
     terminalAPI: TerminalHandler
     projectAPI: ProjectHandler
     storeAPI: StoreHandler
+    cacheAPI: CacheHandler
   }
 }
