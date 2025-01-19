@@ -2,6 +2,7 @@ import { List } from 'antd'
 import { DependencyDetailInfo } from './dependency-detail-info'
 import { useState } from 'react'
 import { UpOutlined, DownOutlined } from '@ant-design/icons'
+import { ErrorBoundary } from 'react-error-boundary'
 
 interface DependencyItemProps {
   name: string
